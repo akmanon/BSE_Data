@@ -57,7 +57,7 @@ for(let  i in symbol){
         Data : Date  
       }
       //File System function to write Object to new Json file.
-      fs.writeFile(`./data/${symbol[i].ScripName}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
+      fs.writeFile(`./StockPrice/${symbol[i].ScripName}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
         if (err) throw err;
         console.log('Done!');
       })
