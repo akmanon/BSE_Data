@@ -1,3 +1,4 @@
 # BSE Data Moduling
   - NodeJs application to extract data, remove noise and save data in JSON and csv format
-  - Daily BSE stock Data of previous five years are saved.
+  - BSE Sensex Share price with parameters such as Open, High , How and Close.
+  - Intraday data between 10-2-2014 to 10-2-2019.
