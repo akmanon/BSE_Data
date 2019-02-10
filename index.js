@@ -14,7 +14,7 @@ let RegDate = /(Date:.+?(?=}))/g;
 
 //HTTP Request To obtain data
 for(let  i in symbol){
-  axios.post(`http://charting.bseindia.com/charting/RestDataProvider.svc/DerivDataBetween?Exch=66&ScCode=${symbol[i].Symbol}&fromdate=08-02-2014-00:00:00-AM&todate=08-02-2019-00:00:00-AM`)
+  axios.post(`##########APIKey########`)
     .then(function (response) {
       data = JSON.stringify(response.data).replace(/\\"/g, '');
       //Open Data
