@@ -1,6 +1,7 @@
 const fs = require('fs');
 const axios = require('axios');
-const symbol = require('./Symbol/symbol')
+const symbol = require('./Symbol/symbol');
+const converter = require('json-2-csv');
 
 // Overal data
 let data;
@@ -11,10 +12,10 @@ let RegClose = /(Close:.+?(?=}))/g;
 let RegHigh = /(High:.+?(?=}))/g;
 let RegLow = /(Low:.+?(?=}))/g;
 let RegDate = /(Date:.+?(?=}))/g;
-
+let i = 0;
 //HTTP Request To obtain data
 for(let  i in symbol){
-  axios.post(`##########APIKey########`)
+  axios.post(`########API KEY######`)
     .then(function (response) {
       data = JSON.stringify(response.data).replace(/\\"/g, '');
       //Open Data
@@ -48,18 +49,33 @@ for(let  i in symbol){
       // console.log(Date);
 
 
-      //Joining All parameter in one object.
+      //Joining all Parameter to generate json
       let StockData = {
         Open : Open,
         High : High,
         Low : Low,
         Close : Close,
-        Data : Date  
+        Date : Date  
       }
+
+      //Joining all Parameter to generate csv(excel file)
+      let string = "Open,High,Low,Close,Date"
+      for(let j = 0; j < Open.length; j++ ){
+          string = string + `\r\n${Open[j]},${High[j]},${Low[j]},${Close[j]},${Date[j]}`;
+      } 
+      // console.log(string);
+
+
       //File System function to write Object to new Json file.
-      fs.writeFile(`./StockPrice/${symbol[i].ScripName}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
+      fs.writeFile(`./StockDataset/JSON/${symbol[i].ScripName}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
         if (err) throw err;
-        console.log('Done!');
+        console.log('Done! JSON');
+      })
+      
+      //File System function to write Object to new Json file.
+      fs.writeFile(`./StockDataset/CSV/${symbol[i].ScripName}.csv`, string, 'utf-8', function (err) {
+        if (err) throw err;
+        console.log('Done! CSV');
       })
     })
     .catch(function (error) {
