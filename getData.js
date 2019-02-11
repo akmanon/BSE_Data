@@ -1,7 +1,15 @@
-const fs = require('fs');
 const axios = require('axios');
-const symbol = require('./Symbol/symbol');
-const converter = require('json-2-csv');
+const fs = require('fs');
+const args = process.argv;
+console.log(args[2]);
+
+let symbol = args[args.length-1];
+
+
+
+fs.mkdir('./Dataset', { recursive: true }, (err) => {
+    if (err) console.log("....");
+  });
 
 // Overal data
 let data;
@@ -12,10 +20,10 @@ let RegClose = /(Close:.+?(?=}))/g;
 let RegHigh = /(High:.+?(?=}))/g;
 let RegLow = /(Low:.+?(?=}))/g;
 let RegDate = /(Date:.+?(?=}))/g;
-let i = 0;
+
+
 //HTTP Request To obtain data
-for(let  i in symbol){
-  axios.post(`http://charting.bseindia.com/charting/RestDataProvider.svc/DerivDataBetween?Exch=66&ScCode=${symbol[i].Symbol}&fromdate=08-02-2014-00:00:00-AM&todate=08-02-2019-00:00:00-AM`)
+  axios.post(`http://charting.bseindia.com/charting/RestDataProvider.svc/DerivDataBetween?Exch=66&ScCode=${symbol}&fromdate=08-02-2014-00:00:00-AM&todate=08-02-2019-00:00:00-AM`)
     .then(function (response) {
       data = JSON.stringify(response.data).replace(/\\"/g, '');
       //Open Data
@@ -67,18 +75,17 @@ for(let  i in symbol){
 
 
       //File System function to write Object to new Json file.
-      fs.writeFile(`./StockDataset/JSON/${symbol[i].ScripName}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
+      fs.writeFile(`./Dataset/${symbol}.json`, JSON.stringify(StockData), 'utf-8', function (err) {
         if (err) throw err;
         console.log('Done! JSON');
       })
       
       //File System function to write Object to new Json file.
-      fs.writeFile(`./StockDataset/CSV/${symbol[i].ScripName}.csv`, string, 'utf-8', function (err) {
+      fs.writeFile(`./Dataset/${symbol}.csv`, string, 'utf-8', function (err) {
         if (err) throw err;
         console.log('Done! CSV');
       })
     })
     .catch(function (error) {
-      console.log(error);
+      console.log("Network Error or Not Valid Symbol : )---Ashish---");
   });
-}
