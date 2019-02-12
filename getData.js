@@ -20,10 +20,11 @@ let RegClose = /(Close:.+?(?=}))/g;
 let RegHigh = /(High:.+?(?=}))/g;
 let RegLow = /(Low:.+?(?=}))/g;
 let RegDate = /(Date:.+?(?=}))/g;
+let RegVolume = /(Volume:.+?(?=}))/g;
 
 
 //HTTP Request To obtain data
-  axios.post(`######API_KEY######`)
+  axios.post(`####API####`)
     .then(function (response) {
       data = JSON.stringify(response.data).replace(/\\"/g, '');
       //Open Data
@@ -57,21 +58,30 @@ let RegDate = /(Date:.+?(?=}))/g;
       // console.log(Date);
 
 
+      //Volume Data
+      let VolumeArray = data.match(RegVolume);
+      let Volume = VolumeArray[0].replace(/Volume:/g, '');
+      Volume = Volume.split(',').map(Number);
+      // console.log(Volume);
+
+
       //Joining all Parameter to generate json
       let StockData = {
-        Open : Open,
-        High : High,
-        Low : Low,
-        Close : Close,
-        Date : Date  
+        Open: Open,
+        High: High,
+        Low: Low,
+        Close: Close,
+        Date: Date,
+        Volume: Volume
       }
 
       //Joining all Parameter to generate csv(excel file)
-      let string = "Open,High,Low,Close,Date"
-      for(let j = 0; j < Open.length; j++ ){
-          string = string + `\r\n${Open[j]},${High[j]},${Low[j]},${Close[j]},${Date[j]}`;
-      } 
-      // console.log(string);
+      let string = "Open,High,Low,Close,Date,Volume"
+      for (let j = 0; j < Open.length; j++) {
+        string = string + `\r\n${Open[j]},${High[j]},${Low[j]},${Close[j]},${Date[j]},${Volume[j]}`;
+      }
+      console.log(string);
+
 
 
       //File System function to write Object to new Json file.
@@ -80,7 +90,7 @@ let RegDate = /(Date:.+?(?=}))/g;
         console.log('Done! JSON');
       })
       
-      //File System function to write Object to new Json file.
+      //File System function to write Object to new CSV file.
       fs.writeFile(`./Dataset/${symbol}.csv`, string, 'utf-8', function (err) {
         if (err) throw err;
         console.log('Done! CSV');
