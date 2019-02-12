@@ -1,7 +1,6 @@
 const fs = require('fs');
 const axios = require('axios');
 const symbol = require('./Symbol/symbol');
-const converter = require('json-2-csv');
 
 // Overal data
 let data;
@@ -11,11 +10,12 @@ let RegOpen = /(Open:.+?(?=}))/g;
 let RegClose = /(Close:.+?(?=}))/g;
 let RegHigh = /(High:.+?(?=}))/g;
 let RegLow = /(Low:.+?(?=}))/g;
+let RegVolume = /(Volume:.+?(?=}))/g;
 let RegDate = /(Date:.+?(?=}))/g;
 let i = 0;
 //HTTP Request To obtain data
 for(let  i in symbol){
-  axios.post(`http://charting.bseindia.com/charting/RestDataProvider.svc/DerivDataBetween?Exch=66&ScCode=${symbol[i].Symbol}&fromdate=08-02-2014-00:00:00-AM&todate=08-02-2019-00:00:00-AM`)
+  axios.post(`###api###`)
     .then(function (response) {
       data = JSON.stringify(response.data).replace(/\\"/g, '');
       //Open Data
@@ -48,6 +48,12 @@ for(let  i in symbol){
       Date = Date.split(',');
       // console.log(Date);
 
+       //Volume Data
+       let VolumeArray = data.match(RegVolume);
+       let Volume  = VolumeArray[0].replace(/Volume:/g,'');
+       Volume = Volume.split(',').map(Number);
+       // console.log(Volume);
+
 
       //Joining all Parameter to generate json
       let StockData = {
@@ -55,13 +61,14 @@ for(let  i in symbol){
         High : High,
         Low : Low,
         Close : Close,
-        Date : Date  
+        Date : Date,
+        Volume : Volume  
       }
 
       //Joining all Parameter to generate csv(excel file)
-      let string = "Open,High,Low,Close,Date"
+      let string = "Open,High,Low,Close,Date,Volume"
       for(let j = 0; j < Open.length; j++ ){
-          string = string + `\r\n${Open[j]},${High[j]},${Low[j]},${Close[j]},${Date[j]}`;
+          string = string + `\r\n${Open[j]},${High[j]},${Low[j]},${Close[j]},${Date[j]},${Volume[j]}`;
       } 
       // console.log(string);
 
